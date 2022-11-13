@@ -24,7 +24,10 @@ const Setting = ({ navigation, route }) => {
   const handleLogout = async () => {
     await AsyncStorage.removeItem('@quizlam_token');
     dispatch(resetUser());
-    navigation.replace('welcome');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'welcome' }],
+    });
   };
 
   return (
@@ -93,11 +96,11 @@ const Setting = ({ navigation, route }) => {
             </View>
           </View>
         </View>
-        <Pressable style={{ alignSelf: 'center' }}>
+        {/* <Pressable style={{ alignSelf: 'center' }}>
           <Text style={{ ...FONTS.h3, color: COLORS.additionalColor2 }}>
             Ganti Avatar
           </Text>
-        </Pressable>
+        </Pressable> */}
 
         {/* form container */}
         <View style={{ marginTop: SIZES.padding }}>

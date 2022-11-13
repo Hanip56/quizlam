@@ -1,12 +1,5 @@
-import {
-  View,
-  Text,
-  ImageBackground,
-  TouchableOpacity,
-  TextInput,
-  Alert,
-} from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, ImageBackground, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { COLORS, FONTS, images, SIZES, URL } from '../constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -15,7 +8,7 @@ import { FormModal, QuestionUpdateModal } from '../components';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 
-const MakeQuestion = ({ route, navigation }) => {
+const MakeQuestion = ({ route }) => {
   const { groupCode } = route.params;
   const [questionList, setQuestionList] = useState([]);
   const [pertanyaan, setPertanyaan] = useState('');
@@ -64,45 +57,6 @@ const MakeQuestion = ({ route, navigation }) => {
       setMessage(message);
       return;
     }
-  };
-
-  const deleteFunc = async () => {
-    try {
-      const res = await axios.delete(
-        `${URL.BASE_URL}/api/group-code/${groupCode?._id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      console.log('fired');
-      // setYourQuizList((prev) =>
-      //   prev.filter((question) => question._id !== res.data)
-      // );
-      navigation.goBack();
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-
-      setMessage(message);
-      return;
-    }
-  };
-
-  const handleDelete = async () => {
-    Alert.alert('Hapus quiz?', 'quiz ini akan terhapus', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      { text: 'Ok', onPress: () => deleteFunc() },
-    ]);
   };
 
   useEffect(() => {
@@ -260,25 +214,9 @@ const MakeQuestion = ({ route, navigation }) => {
           borderBottomRightRadius: SIZES.padding * 2,
         }}
       >
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Text style={{ ...FONTS.h2, color: COLORS.white }}>
-            {groupCode?.name}
-          </Text>
-          <TouchableOpacity
-            style={{
-              backgroundColor: COLORS.text,
-              width: 40,
-              height: 40,
-              marginLeft: SIZES.base,
-              borderRadius: SIZES.radius,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            onPress={handleDelete}
-          >
-            <Ionicons name="trash" size={20} color={COLORS.bg} />
-          </TouchableOpacity>
-        </View>
+        <Text style={{ ...FONTS.h2, color: COLORS.white }}>
+          {groupCode?.name}
+        </Text>
         <View style={{ flexDirection: 'row' }}>
           <Text style={{ ...FONTS.body5, color: COLORS.white }}>Code : </Text>
           <Text

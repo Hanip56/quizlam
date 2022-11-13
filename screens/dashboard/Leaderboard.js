@@ -40,11 +40,11 @@ const Leaderboard = () => {
           }}
         >
           <View style={{}}>
-            <Text>Your rank</Text>
+            <Text style={{ ...FONTS.h5 }}>Your rank</Text>
             <Text
               style={{ textAlign: 'center', ...FONTS.h3, color: COLORS.white }}
             >
-              13
+              -
             </Text>
           </View>
         </View>

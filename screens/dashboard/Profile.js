@@ -41,7 +41,7 @@ const Profile = ({ navigation }) => {
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={{ flex: 1, paddingHorizontal: SIZES.padding }}
+        style={{ flex: 1, paddingHorizontal: SIZES.radius }}
       >
         {/* header */}
         <TouchableOpacity

@@ -1,4 +1,4 @@
-import { View, Text, Image, ImageBackground } from 'react-native';
+import { View, Text, Image, ImageBackground, BackHandler } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { COLORS, FONTS, images, SIZES } from '../../constants';
 import { CustomBtn } from '../../components';
@@ -11,7 +11,20 @@ const Welcome = ({ navigation }) => {
   const [success, setSuccess] = useState(false);
   const [stateScreen, setStateScreen] = useState('');
   const dispatch = useDispatch();
-  const { user, isSuccess } = useSelector((state) => state.user);
+  const { user, isSuccess, isError, message } = useSelector(
+    (state) => state.user
+  );
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', () =>
+      BackHandler.exitApp()
+    );
+
+    return () =>
+      BackHandler.removeEventListener('hardwareBackPress', () =>
+        BackHandler.exitApp()
+      );
+  }, []);
 
   useEffect(() => {
     dispatch(reset());
@@ -34,6 +47,7 @@ const Welcome = ({ navigation }) => {
   useEffect(() => {
     if (success) {
       SplashScreen.hide();
+      dispatch(reset());
     }
   }, [success]);
 
@@ -48,6 +62,12 @@ const Welcome = ({ navigation }) => {
       dispatch(reset());
     }
   }, [isSuccess]);
+
+  useEffect(() => {
+    if (isError) {
+      SplashScreen.hide();
+    }
+  });
 
   return (
     <ImageBackground

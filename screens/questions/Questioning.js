@@ -57,13 +57,9 @@ const Questioning = ({ navigation, route }) => {
     setCorrect(isCorrect);
   };
 
-  const handleGoBack = () =>
-    Alert.alert('Apa kamu yakin ?', 'semua progress akan terhapus', [
-      {
-        text: 'Batal',
-      },
-      { text: 'Ok', onPress: () => navigation.goBack() },
-    ]);
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
 
   const handleNext = () => {
     setCurrentQuestion((prev) => prev + 1);
@@ -84,6 +80,27 @@ const Questioning = ({ navigation, route }) => {
     }
   }, [questions, currentQuestion]);
 
+  useEffect(
+    () =>
+      navigation.addListener('beforeRemove', (e) => {
+        // Prevent default behavior of leaving the screen
+        e.preventDefault();
+
+        // Prompt the user before leaving the screen
+        Alert.alert('Apa kamu yakin?', 'Semua progress akan terhapus', [
+          { text: 'Batal', style: 'cancel', onPress: () => {} },
+          {
+            text: 'Ok',
+            style: 'destructive',
+            // If the user confirmed, then we dispatch the action we blocked earlier
+            // This will continue the action that had triggered the removal of the screen
+            onPress: () => navigation.dispatch(e.data.action),
+          },
+        ]);
+      }),
+    [navigation]
+  );
+
   if (loading) {
     return <Loading />;
   }
@@ -96,7 +113,7 @@ const Questioning = ({ navigation, route }) => {
           <View
             style={{
               flexDirection: 'row',
-              padding: SIZES.padding,
+              padding: SIZES.radius,
               justifyContent: 'space-between',
               alignItems: 'center',
             }}
@@ -107,11 +124,7 @@ const Questioning = ({ navigation, route }) => {
             <Text style={{ ...FONTS.h3 }}>
               {questions[currentQuestion]?.subject}
             </Text>
-            <TouchableOpacity>
-              <Text style={{ ...FONTS.body4, color: COLORS.primary2 }}>
-                Skip
-              </Text>
-            </TouchableOpacity>
+            <View />
           </View>
 
           {/* progress bar */}
@@ -119,7 +132,7 @@ const Questioning = ({ navigation, route }) => {
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              paddingHorizontal: SIZES.padding,
+              paddingHorizontal: SIZES.radius,
             }}
           >
             {/* bar */}
@@ -166,7 +179,7 @@ const Questioning = ({ navigation, route }) => {
           </View>
 
           {/* question container */}
-          <View style={{ paddingHorizontal: SIZES.padding }}>
+          <View style={{ paddingHorizontal: SIZES.radius }}>
             <Text style={{ ...FONTS.h2 }}>
               {questions[currentQuestion]?.question}
             </Text>

@@ -11,8 +11,6 @@ export { default as Home } from './dashboard/Home';
 export { default as Leaderboard } from './dashboard/Leaderboard';
 export { default as Profile } from './dashboard/Profile';
 export { default as Setting } from './dashboard/Setting';
-export { default as Search } from './dashboard/Search';
-export { default as Activity } from './dashboard/Activity';
 export { default as Playground } from './dashboard/Playground';
 
 // Questioning

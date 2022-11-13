@@ -1,7 +1,7 @@
-import { View, Text, Pressable, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, Share } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { COLORS, FONTS, SIZES, URL } from '../../constants';
-import { FlatList, ScrollView, TextInput } from 'react-native-gesture-handler';
+import { FlatList, TextInput } from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,7 +9,6 @@ import Modal from 'react-native-modal';
 import { customAlphabet } from 'nanoid/non-secure';
 import { useSelector } from 'react-redux';
 import { CustomCard } from '../../components';
-import Clipboard from '@react-native-clipboard/clipboard';
 
 const Playground = ({ navigation }) => {
   const [stateScreen, setStateScreen] = useState(true);
@@ -21,10 +20,7 @@ const Playground = ({ navigation }) => {
 
   const [nameQuiz, setNamaQuiz] = useState('');
   const [errorNamaQuiz, setErrorNamaQuiz] = useState('');
-  const [matpel, setMatpel] = useState('');
   const [errorBuatQuiz, setErrorBuatQuiz] = useState('');
-
-  const [copiedToClipboard, setCopiedToClipboard] = useState(false);
 
   const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 6);
 
@@ -92,13 +88,63 @@ const Playground = ({ navigation }) => {
     }
   };
 
-  const handleCopyCode = (code) => {
-    Clipboard.setString(code);
-    setCopiedToClipboard(true);
+  const handleCopyCode = async (code) => {
+    // Clipboard.setString(code);
+
+    try {
+      const result = await Share.share({
+        message: code,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
   };
 
   const handleEdit = (item) => {
     navigation.navigate('MakeQuestion', { groupCode: item });
+  };
+
+  const deleteFunc = async (id) => {
+    try {
+      const res = await axios.delete(`${URL.BASE_URL}/api/group-code/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setYourQuizList((prev) =>
+        prev.filter((question) => question._id !== res.data)
+      );
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      setMessage(message);
+      return;
+    }
+  };
+
+  const handleDelete = async (id) => {
+    Alert.alert('Hapus quiz?', 'quiz ini akan terhapus', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      { text: 'Ok', onPress: () => deleteFunc(id) },
+    ]);
   };
 
   useEffect(() => {
@@ -117,16 +163,8 @@ const Playground = ({ navigation }) => {
     fetchYourQuiz();
   }, []);
 
-  useEffect(() => {
-    if (copiedToClipboard) {
-      setTimeout(() => {
-        setCopiedToClipboard(false);
-      }, 1000);
-    }
-  }, [copiedToClipboard]);
-
   return (
-    <SafeAreaView style={{ flex: 1, padding: SIZES.padding }}>
+    <SafeAreaView style={{ flex: 1, padding: SIZES.radius }}>
       <View style={{ alignItems: 'center' }}>
         <Text style={{ ...FONTS.h3 }}>Main Bersama Teman</Text>
       </View>
@@ -284,23 +322,6 @@ const Playground = ({ navigation }) => {
                       placeholder="Masukan nama quiz"
                     />
                   </View>
-
-                  <Text style={{ ...FONTS.h4, marginTop: SIZES.base }}>
-                    Mata pelajaran
-                  </Text>
-                  <View
-                    style={{
-                      backgroundColor: '#00000015',
-                      borderRadius: SIZES.radius,
-                      paddingHorizontal: SIZES.base,
-                      marginVertical: SIZES.base,
-                    }}
-                  >
-                    <TextInput
-                      onChangeText={(text) => setMatpel(text)}
-                      placeholder="Masukan mata pelajaran"
-                    />
-                  </View>
                 </View>
 
                 {/* error buat quiz */}
@@ -404,73 +425,68 @@ const Playground = ({ navigation }) => {
             keyExtractor={(item) => item._id}
             contentContainerStyle={{ paddingBottom: 160 }}
             renderItem={({ item, index }) => (
-              <CustomCard
-                title={item.name}
-                subtitle={`Code : ${item.code}`}
-                bgColor={COLORS.primary}
-                arrow={false}
-                disabled={true}
-                afterComponent={
-                  <View
+              <>
+                <CustomCard
+                  title={item.name}
+                  subtitle={`Code : ${item.code}`}
+                  bgColor={COLORS.primary}
+                  arrow={false}
+                  disabled={true}
+                />
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    backgroundColor: COLORS.primary,
+                    justifyContent: 'flex-end',
+                    padding: SIZES.radius,
+                    marginTop: -SIZES.padding,
+                  }}
+                >
+                  <TouchableOpacity
                     style={{
-                      flexDirection: 'row',
+                      backgroundColor: COLORS.text,
+                      width: 35,
+                      height: 35,
+                      borderRadius: SIZES.base,
+                      justifyContent: 'center',
+                      alignItems: 'center',
                     }}
+                    onPress={() => handleCopyCode(item.code)}
                   >
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: COLORS.text,
-                        width: 40,
-                        height: 40,
-                        borderRadius: SIZES.radius,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                      onPress={() => handleCopyCode(item.code)}
-                    >
-                      <Ionicons name="copy-sharp" size={20} color={COLORS.bg} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: COLORS.text,
-                        width: 40,
-                        height: 40,
-                        marginLeft: SIZES.base,
-                        borderRadius: SIZES.radius,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                      onPress={() => handleEdit(item)}
-                    >
-                      <Ionicons name="create" size={20} color={COLORS.bg} />
-                    </TouchableOpacity>
-                  </View>
-                }
-              />
+                    <Ionicons name="copy-sharp" size={16} color={COLORS.bg} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: COLORS.text,
+                      width: 35,
+                      height: 35,
+                      marginLeft: SIZES.base,
+                      borderRadius: SIZES.base,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                    onPress={() => handleEdit(item)}
+                  >
+                    <Ionicons name="create" size={20} color={COLORS.bg} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: COLORS.text,
+                      width: 35,
+                      height: 35,
+                      marginLeft: SIZES.base,
+                      borderRadius: SIZES.base,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                    onPress={() => handleDelete(item._id)}
+                  >
+                    <Ionicons name="trash" size={16} color={COLORS.bg} />
+                  </TouchableOpacity>
+                </View>
+              </>
             )}
           />
-        </View>
-      )}
-
-      {copiedToClipboard && (
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 20,
-            width: SIZES.width,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <View
-            style={{
-              paddingVertical: SIZES.base,
-              paddingHorizontal: SIZES.padding,
-              backgroundColor: COLORS.additionalColor,
-              borderRadius: SIZES.base,
-            }}
-          >
-            <Text style={{ textAlign: 'center' }}>copied</Text>
-          </View>
         </View>
       )}
     </SafeAreaView>

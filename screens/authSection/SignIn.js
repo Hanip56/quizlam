@@ -17,7 +17,7 @@ const SignIn = ({ navigation }) => {
   const [errorPassword, setErrorPassword] = useState('');
   const [password, setPassword] = useState('');
   const user = useSelector((state) => state.user);
-  const { isError, message, isSuccess } = user;
+  const { isError, message, isSuccess, isLoading } = user;
   const dispatch = useDispatch();
 
   const [showPass, setShowPass] = useState(false);
@@ -41,7 +41,10 @@ const SignIn = ({ navigation }) => {
 
   useEffect(() => {
     if (isSuccess) {
-      navigation.replace('Dashboard');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Dashboard' }],
+      });
       dispatch(reset());
     }
   }, [isSuccess]);
@@ -64,7 +67,7 @@ const SignIn = ({ navigation }) => {
       title="Selamat datang"
       titleBold="Kembali"
       description="Tolong Sign in untuk masuk"
-      labelBtn="Sign In"
+      labelBtn={isLoading ? 'Loading...' : 'Sign In'}
       onBackBtn={() => navigation.goBack()}
       onPressBtn={handleSignIn}
     >

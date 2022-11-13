@@ -25,14 +25,11 @@ const Home = ({ navigation }) => {
     getSubjectList();
   }, []);
 
-  console.log({ isLoading, isSuccess });
-
   return (
     <SafeAreaView style={{ flex: 1, paddingBottom: 0 }}>
       <ScrollView
         style={{
-          paddingHorizontal: SIZES.padding,
-          paddingBottom: SIZES.padding,
+          padding: SIZES.radius,
         }}
         showsVerticalScrollIndicator={false}
       >
@@ -42,7 +39,6 @@ const Home = ({ navigation }) => {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginTop: SIZES.padding,
           }}
         >
           <View>

@@ -1,18 +1,12 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {
-  Home,
-  Leaderboard,
-  Profile,
-  Activity,
-  Search,
-  Playground,
-} from '../../screens';
+import { Home, Leaderboard, Profile, Playground } from '../../screens';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useSelector } from 'react-redux';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 const Dashboard = () => {
+  const netinfo = useNetInfo();
   const Tab = createBottomTabNavigator();
-  const user = useSelector((state) => state.user);
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -27,10 +21,6 @@ const Dashboard = () => {
             iconName = focused ? 'trophy' : 'trophy';
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person';
-          } else if (route.name === 'Search') {
-            iconName = focused ? 'search' : 'search';
-          } else if (route.name === 'Activity') {
-            iconName = focused ? 'create' : 'create';
           } else if (route.name === 'Playground') {
             iconName = focused
               ? 'people-circle-outline'
@@ -50,8 +40,6 @@ const Dashboard = () => {
       })}
     >
       <Tab.Screen name="Home" component={Home} />
-      {/* <Tab.Screen name="Search" component={Search} />
-      <Tab.Screen name="Activity" component={Activity} /> */}
       <Tab.Screen name="Playground" component={Playground} />
       <Tab.Screen name="Leaderboard" component={Leaderboard} />
       <Tab.Screen name="Profile" component={Profile} />
