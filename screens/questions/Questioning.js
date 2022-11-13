@@ -83,6 +83,9 @@ const Questioning = ({ navigation, route }) => {
   useEffect(
     () =>
       navigation.addListener('beforeRemove', (e) => {
+        if (currentQuestion === questions?.length - 1) {
+          return;
+        }
         // Prevent default behavior of leaving the screen
         e.preventDefault();
 
@@ -98,7 +101,7 @@ const Questioning = ({ navigation, route }) => {
           },
         ]);
       }),
-    [navigation]
+    [navigation, currentQuestion]
   );
 
   if (loading) {

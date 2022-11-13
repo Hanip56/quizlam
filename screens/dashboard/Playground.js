@@ -89,8 +89,6 @@ const Playground = ({ navigation }) => {
   };
 
   const handleCopyCode = async (code) => {
-    // Clipboard.setString(code);
-
     try {
       const result = await Share.share({
         message: code,
