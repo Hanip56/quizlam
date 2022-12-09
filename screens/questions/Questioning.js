@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  StatusBar,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { COLORS, FONTS, images, SIZES, URL } from '../../constants';
@@ -110,6 +111,7 @@ const Questioning = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar animated={true} hidden={true} />
       <ImageBackground style={{ flex: 1 }} source={images.questionsBg}>
         <ScrollView>
           {/* header */}
@@ -127,7 +129,7 @@ const Questioning = ({ navigation, route }) => {
             <Text style={{ ...FONTS.h3 }}>
               {questions[currentQuestion]?.subject}
             </Text>
-            <View />
+            <View style={{ width: 10 }} />
           </View>
 
           {/* progress bar */}

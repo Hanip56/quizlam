@@ -1,4 +1,11 @@
-import { View, Text, Image, ImageBackground, BackHandler } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  ImageBackground,
+  BackHandler,
+  StatusBar,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { COLORS, FONTS, images, SIZES } from '../../constants';
 import { CustomBtn } from '../../components';
@@ -75,6 +82,7 @@ const Welcome = ({ navigation }) => {
       resizeMode="stretch"
       style={{ flex: 1, padding: SIZES.padding }}
     >
+      <StatusBar animated={true} hidden={true} />
       <View
         style={{
           alignItems: 'center',
